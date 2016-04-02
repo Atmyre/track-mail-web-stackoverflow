@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+        <h1>Hello, guest!</h1>
+    </head>
+
+    <body>
+
+    {% block header %}
+
+            {% if  user.is_authenticated %}
+		<form>
+                <a href="{% url 'login:logout' request.get_full_path|urlencode %}" type="submit">Sign out</a>
+
+            {% else %}
+
+                <a href="{% url 'login:login' request.get_full_path|urlencode %}" role="button">Sign in</a>    
+                <a href="{% url 'login:register' request.get_full_path|urlencode %}"  role="button">Register</a>
+                  
+            {% endif %}
+	    </form>
+
+    {% endblock %}
+
+
+
+    {% block sidecont %}
+
+        {% if user.is_authenticated %}
+
+            <form action="{% url 'textform:newmessage' %}" method="post">
+            {% csrf_token %}
+                {{ form.as_p }}
+            <input type="submit" value="Send" />
+            </form>
+
+            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+	    {% else %}
+
+        <p> Sorry, you need to log in to be able to write messages( </p>
+        {% endif %} 
+
+    {% endblock %}
+
+ </body>
+</html>

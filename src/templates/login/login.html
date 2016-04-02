@@ -1,0 +1,37 @@
+{% block bodycont %}
+
+
+
+	<form action="{% url 'login:login' redirect_to %}" method="post">
+		{% csrf_token %}
+
+        <div>
+            {{ user_form.non_field_errors }}
+            <div>
+                {{ user_form.username.errors }}
+                {{ user_profile_form.errors }}
+	            <label for="{{ form.username.id_for_label }}">Login:</label>
+                {{ user_form.username }}
+            </div>
+
+            <div>
+                {{ user_form.password.errors }}
+                {{ user_profile_form.errors }}
+	            <label for="{{ form.password.id_for_label }}">Password:</label>
+                {{ user_form.password }}
+            </div>
+
+<!--		<label for="username"> Login </label>
+		<input type="text" name="username" id="username">
+		<label for="password">Password</label>
+		<input type="password" name="password" id="password">
+-->
+		<input class="button" type="submit" value="Log in">
+	</form>
+
+	{% if login_error %}
+		<label class="error">{{ login_error }}</label>
+	{% endif %}
+
+{% endblock %}
+

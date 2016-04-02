@@ -1,0 +1,47 @@
+{% extends "stackoverflow/base.html" %}
+
+{% load static %}
+
+{% block title %}
+    {% if  user.is_authenticated %}
+        <h1>Hello, {{ user.username }}</h1>
+    {% else %}
+        <h1>Hello, guest!</h1>
+    {% endif %}
+{%  endblock %}
+
+{%  block content %}
+
+    {% if  user.is_authenticated %}
+        <p> <a href="{% url 'textform:newmessage'%}" role="button">New message</a>
+    {% endif %}
+
+    <form action="">
+        {{ form.errors }}
+        {{ form }}
+        <input type="submit">
+    </form>
+
+    <p><h1>Messages</h1></p>
+
+    {% if latest_message_list %}
+        {% for message in latest_message_list %}
+
+            <p> <b>{{message.author }} </b><p>
+
+                <p><b>Blog:</b> <a href="{% url 'textform:blogs:detail' message.blog.id %}">{{ message.blog.name }}</a> </p>
+                <p><b>Message:</b> </p> <p>{{ message.message_beginning }} <a href="{% url 'textform:detail' message.id %}">More...</a> </p>
+                <p>Published: {{message.pub_date}} </p>
+                <p>Last modified: {{ message.mod_date }} </p>
+                {% if not message.published %}
+                    <p><b>Not Published</b></p>
+                {% endif %}
+                <p> ------------------------------------------------- </p>
+
+        {% endfor %}
+    {% else %}
+        <p>No messages yet.</p>
+    {% endif %}
+
+{% endblock %}
+

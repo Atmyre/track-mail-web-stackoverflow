@@ -1,0 +1,43 @@
+{% extends "stackoverflow/base.html" %}
+
+{% load static %}
+
+{% block title %}
+    <a href="#">
+        {{ message.author.user.username }}
+
+            {%load staticfiles%}
+            <img src="/static/UserPic_1.jpg" style="width:100px;height:100px;">
+    </a>
+
+    <p>Blog: <a href="{% url 'textform:blogs:detail' message.blog.id %}">{{ message.blog.name }}</a></p>
+
+    <p><h2>{{ message.text }}</h2></p>
+    {% if  user.is_authenticated %}
+        {% if user == message.author %}
+            <p> <a href="{% url 'textform:editmessage' message.id %}" role="button">Edit message</a>
+            <a href="{% url 'textform:deletemessage' message.id %}" role="button">Delete message</a><p>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <p><h3>Your comment:</h3></p>
+    {% if user.is_authenticated %}
+        <form method="post">
+            {% csrf_token %}
+                {{ form.errors }}
+                {{ form }}
+            <input type="submit">
+        </form>
+    {% endif %}
+
+    <script>
+        function load_comments() {
+            $('#comments').load('{% url "textform:comments:comments_ajax" pk=message.id %}');
+        };
+        window.setInterval(load_comments, 1000);
+    </script>
+
+{% endblock %}
+

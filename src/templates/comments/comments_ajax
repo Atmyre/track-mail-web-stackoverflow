@@ -1,0 +1,4 @@
+{% for comment in message.comments.all %}
+    {{ comment.author }} <b>{{ comment.pub_date }}</b>
+    <div>{{ comment.text }}</div>
+{% endfor %}

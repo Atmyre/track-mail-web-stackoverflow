@@ -1,0 +1,75 @@
+{% block bodycont %}
+
+                
+        {% if registered %}
+        <strong>Thank you for registering!</strong>
+        <a href="/textform">Return to the homepage.</a><br />
+        {% else %}
+
+
+        <form id="user_form" method="post" action="{% url 'login:register' redirect_to %}">
+
+            {% csrf_token %}
+		        {{ user_form.non_field_errors }}
+                
+                <div>
+                    {{ user_form.username.errors }}
+                    {{ user_profile_form.errors }}
+		            <label for="{{ form.username.id_for_label }}">Login:</label>
+<!--			        <input placeholder="Login" type="text" name="username"> -->
+                    {{ user_form.username }}
+                </div>
+
+                <div>
+                    {{ user_form.password.errors }}
+                    {{ user_profile_form.errors }}
+		            <label for="{{ form.password.id_for_label }}">Password:</label>
+                    {{ user_form.password }}
+                </div>
+
+                <div>
+                    {{ user_form.email.errors }}
+                    {{ user_profile_form.errors }}
+		            <label for="{{ form.email.id_for_label }}">E-mail:</label>
+                    {{ user_form.email }}
+                </div>
+<!--
+                <fieldset>
+                    <legend>Registration</legend>
+                    <div>
+                        <label for="inputLogin">Login</label>
+                        <div>
+                            <input class="form-control" placeholder="Login" type="text" name="username">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="inputPassword">Password</label>
+                        <div>
+                        <input placeholder="Password" type="password" name="password">
+                      
+                        </div>
+                    </div>
+                   
+                    <div>
+                        <label for="inputNickName">E-mail</label>
+                        <div>
+                            <input placeholder="E-mail" type="text" name="email">                        
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="inputNickName">Website</label>
+                        <div>
+                            <input placeholder="Website" type="text" name="website">                           
+                        </div>
+                    </div>
+                    
+                </fieldset> 
+-->
+            <input type="submit" name="submit" value="Register"/>
+        </form>
+        {% endif %}
+
+
+					
+{% endblock %}

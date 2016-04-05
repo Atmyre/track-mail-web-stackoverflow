@@ -1,26 +1,6 @@
-{% extends "stackoverflow/base.html" %}
+{% extends "textform/index.html" %}
 
+{% load widget_tweaks %}
 {% load static %}
 
 
-{% block title %}
-    <h1>{{ view.title }}</h1>
-    <h2>{{ view.descr }}</h2>
-{% endblock %}
-
-{%  block content %}
-
-    <form action="">
-        {{ form.errors }}
-        {{ form }}
-        <input type="submit">
-    </form>
-
-    {% if latest_message_list %}
-        {% for message in latest_message_list %}
-            <p> {{message.author }} <a href="{% url 'textform:detail' message.id %}">{{ message.text }}</a> {{message.pub_date}} </p>
-        {% endfor %}
-    {% else %}
-        <p>No messages in this blog yet.</p>
-    {% endif %}
-{% endblock %}

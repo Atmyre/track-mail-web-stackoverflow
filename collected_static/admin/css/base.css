@@ -6,11 +6,16 @@
 
 body {
     margin: 0;
-    padding: 0;
+    padding-top: 60px;
     font-size: 14px;
     font-family: "Roboto","Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
     color: #333;
     background: #fff;
+}
+@media (max-width: 979px) {
+  body {
+    padding-top: 0px;
+  }
 }
 
 /* LINKS */
@@ -955,7 +960,7 @@ table#change-history tbody th {
 
 /* POPUP */
 .popup #content {
-    padding: 20px;
+    padding: 30px;
 }
 
 .popup #container {

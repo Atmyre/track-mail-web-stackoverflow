@@ -1,6 +1,8 @@
+from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.views import generic
 from textform.models import Message
+from comments.models import Comment
 from .models import Blog
 from .forms import BlogForm
 
@@ -10,7 +12,8 @@ class BlogView(generic.ListView):
     template_name = 'blogs/blog.html'
     context_object_name = 'latest_message_list'
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request, pk=None, *args, **kwargs):
+        self.blog = get_object_or_404(Blog.objects.all(), pk=pk)
 
         self.form = BlogForm(request.GET)
         self.form.is_valid()
@@ -37,4 +40,9 @@ class BlogView(generic.ListView):
             messages = messages.filter(Q(title__icontains=self.search_field) | Q(text__icontains=self.search_field))
         if self.sort_field:
             messages = messages.order_by(self.sort_field)
-        return messages
+        return messages.filter(Q(blog=self.blog))
+
+    def latest_comments(self):
+        print self.blog.message_set
+        return Comment.objects.filter(Q(message__in=self.blog.message_set.all())).order_by('-pub_date')[:7]
+        #.filter(Q(message__in=self.blog.message_set))

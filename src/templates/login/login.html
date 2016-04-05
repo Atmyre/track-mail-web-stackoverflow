@@ -1,37 +1,33 @@
-{% block bodycont %}
+{% extends "stackoverflow/base.html" %}
 
+{% load widget_tweaks %}
 
+{% block content %}
 
-	<form action="{% url 'login:login' redirect_to %}" method="post">
-		{% csrf_token %}
+    {% if user_form.non_field_errors  %}
+      <div class="alert alert-danger">Username or password are not valid</div>
+    {% endif %}
 
-        <div>
-            {{ user_form.non_field_errors }}
-            <div>
-                {{ user_form.username.errors }}
-                {{ user_profile_form.errors }}
-	            <label for="{{ form.username.id_for_label }}">Login:</label>
-                {{ user_form.username }}
-            </div>
+    {% if login_error %}
+      <div class="alert alert-danger">Your username and/or password are incorrect. Please try again.</div>
+    {% endif %}
 
-            <div>
-                {{ user_form.password.errors }}
-                {{ user_profile_form.errors }}
-	            <label for="{{ form.password.id_for_label }}">Password:</label>
-                {{ user_form.password }}
-            </div>
+    <div class="col-md-6 col-sm-offset-3 container">
+      <form class="form-signin" action="{% url 'login:login' redirect_to %}" method="post" >
+        <h2 class="form-signin-heading">Please sign in</h2>
+        {% csrf_token %}
+        {{ user_form.username|add_class:"form-control"|append_attr:"placeholder:Username" }}
+        {{ user_form.password|add_class:"form-control"|append_attr:"placeholder:Password" }}
+        <button class="btn btn-lg btn-primary btn-block" type="submit" value="login">Sign in</button>
+        <a href="{% url 'login:register' request.get_full_path|urlencode %}">Register me</a>
 
-<!--		<label for="username"> Login </label>
-		<input type="text" name="username" id="username">
-		<label for="password">Password</label>
-		<input type="password" name="password" id="password">
--->
-		<input class="button" type="submit" value="Log in">
-	</form>
-
-	{% if login_error %}
-		<label class="error">{{ login_error }}</label>
-	{% endif %}
+        {% if next == "" %}
+          <input type="hidden" name="next" value="/" />
+        {% else %}
+          <input type="hidden" name="next" value="{{ next }}" />
+        {% endif %}
+      </form>
+    </div>
 
 {% endblock %}
 

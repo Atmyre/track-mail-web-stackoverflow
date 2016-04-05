@@ -2,8 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/i18n/jquery-ui-i18n.min.js"></script>
@@ -13,35 +11,96 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.min.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    {% load staticfiles %}
+    <link href="{% static "css/bootstrap/css/bootstrap.css" %}" rel="stylesheet">
+
+    {% load staticfiles %}
+    <link href="{% static "css/style.css" %}" rel="stylesheet">
 </head>
-<body>
+<body role="document">
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+
+        <div class="navbar-header">
+          <a class="navbar-brand" href="{% url 'textform:index' %}"></a>
+        </div>
+
+        <div id="navbar" class="navbar-collapse collapse">
+             <ul class="nav navbar-nav">
+                <li><a class="navbar-brand" href="{% url 'textform:index' %}">Home</a></li>
+                {% if  user.is_authenticated %}
+                    <li><a href="{% url 'textform:newmessage'%}">New post</a></li>
+                {% endif %}
+             </ul>
 
 
-    <div>
-        {% block header %}
+            <form class="navbar-form navbar-right">
+              {% if  user.is_authenticated %}
+                    <a href="#" class="btn btn-link" role="button">{{ user.username }}</a>
+                    <a href="{% url 'login:logout' request.get_full_path|urlencode %}" type="submit" class="btn btn-default">Sign out</a>
+              {% else %}
+                  <a href="{% url 'login:login' request.get_full_path|urlencode %}" role = "button" class="btn btn-default">Sign in</a>
+                  <a href="{% url 'login:register' request.get_full_path|urlencode %}"  role="button" class="btn btn-default">Register</a>
+              {% endif %}
+             </form>
 
-            <p> <a href="{% url 'textform:index' %}">To homepage</a></p>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
 
-            {% if  user.is_authenticated %}
-		<form>
-                <a href="{% url 'login:logout' request.build_absolute_uri|urlencode %}" type="submit">Sign out</a>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                {% block title %}
+                {% endblock %}
 
-            {% else %}
+                {% block content %}
+                {% endblock %}
+            </div>
 
-                <a href="{% url 'login:login' request.build_absolute_uri|urlencode %}" role="button">Sign in</a>
-                <a href="{% url 'login:register' request.get_full_path|urlencode %}"  role="button">Register</a>
+            <div class="col-md-3 col-md-offset-1 blog-sidebar">
+                {%  block fast-navig %}
+                    <div class="sidebar-module">
+                        <div class="btn-group btn-group-justified">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default">Blogs</button>
+                             </div>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default">Users</button>
+                            </div>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default">Help</button>
+                            </div>
+                        </div>
+                    </div>
+                {%  endblock %}
 
-            {% endif %}
-	    </form>
+                {% block sidecont %}
 
+                {% endblock %}
+            </div>
+        </div>
+
+    </div>
+
+    {% block footer %}
+        <!-- Footer-->
+        <div id="footer">
+          <div class="container">
+            <p class="text-muted">Stackoverflow 2016-2016
+              <address class="text-muted">
+                <strong>Gainsteva Tatiana: </strong>
+                <a href="mailto:#">killmeplease</a>
+              </address>
+            </p>
+          </div>
+        </div>
     {% endblock %}
-    </div>
 
-    <h1>{% block title %}{% endblock %}</h1>
-
-    <div>
-        {% block content %}{% endblock %}
-    </div>
 
 </body>
 </html>

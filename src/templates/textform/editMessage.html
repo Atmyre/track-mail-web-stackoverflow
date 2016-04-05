@@ -1,49 +1,41 @@
-<!DOCTYPE html>
+{% extends "stackoverflow/base.html" %}
 
-<html lang="en">
-
-    <head>
-        <h1>Hello, guest!</h1>
-    </head>
-
-    <body>
-
-    {% block header %}
-
-            {% if  user.is_authenticated %}
-		<form>
-                <a href="{% url 'login:logout' request.get_full_path|urlencode %}" type="submit">Sign out</a>
-
-            {% else %}
-
-                <a href="{% url 'login:login' request.get_full_path|urlencode %}" role="button">Sign in</a>    
-                <a href="{% url 'login:register' request.get_full_path|urlencode %}"  role="button">Register</a>
-                  
-            {% endif %}
-	    </form>
-
-    {% endblock %}
+{% load widget_tweaks %}
+{% load static %}
 
 
-    {% block sidecont %}
 
-        {% if user.is_authenticated %}
+{% block content %}
 
-        <form action="{% url 'textform:editmessage' message.id %}" method="post">
+    <form class="form-horizontal" action="{% url 'textform:editmessage' message.id %}" method="post">
         {% csrf_token %}
-			{{ form.as_p }}
-        <input type="submit" value="Send" />
-        </form>
+        <div class="form-group">
+        <label class="control-label col-md-1">Title: </label>
+        <div class="col-md-9">
+            {{ form.title|add_class:"form-control" }}
+        </div>
+      </div>
 
-                
-            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+      <div class="form-group">
+        <label class="control-label col-md-1">Text: </label>
+        <div class="col-md-9">
+            {{ form.text|add_class:"form-control" }}
+        </div>
+      </div>
 
-	    {% else %}
+      <div class="form-group">
+        <label class="control-label col-md-1">Blog: </label>
+        <div class="col-md-9">
+            {{ form.blog|add_class:"form-control" }}
+        </div>
+      </div>
 
-        <p> Sorry, you need to log in to be able to write messages( </p>
-        {% endif %} 
+      <div class="form-group">
+        <div class="col-md-offset-1 col-md-9">
+          <input type="submit" class="btn btn-primary" value="Save">
+        </div>
+      </div>
+    </form>
 
-    {% endblock %}
 
- </body>
-</html>
+{% endblock %}

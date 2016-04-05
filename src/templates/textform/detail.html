@@ -1,37 +1,37 @@
 {% extends "stackoverflow/base.html" %}
 
+{% load widget_tweaks %}
 {% load static %}
 
 {% block title %}
-    <a href="#">
-        {{ message.author.user.username }}
+    <div class="panel">
+        <div class="panel-heading">
+            <h4>{{ message.title }} by <a href="#">{{ message.author }}</a></h4>
+        </div>
+        <div class="panel-body">
+          <div class="col-md-1">
+            <h1>10</h1>
+          </div>
+          <div class="col-md-1">
+            <button type="button" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-plus"></span></button>
+            <button type="button" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-minus"></span></button>
+          </div>
+          <div class="col-md-2">
+            <img class="user-big-icon" src="https://goo.gl/q26Tmc">
+          </div>
+          <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>{{ message.text }} </p>
+                </div>
+            </div>
 
-            {%load staticfiles%}
-            <img src="/static/UserPic_1.jpg" style="width:100px;height:100px;">
-    </a>
-
-    <p>Blog: <a href="{% url 'textform:blogs:detail' message.blog.id %}">{{ message.blog.name }}</a></p>
-
-    <p><h2>{{ message.text }}</h2></p>
-    {% if  user.is_authenticated %}
-        {% if user == message.author %}
-            <p> <a href="{% url 'textform:editmessage' message.id %}" role="button">Edit message</a>
-            <a href="{% url 'textform:deletemessage' message.id %}" role="button">Delete message</a><p>
-        {% endif %}
-    {% endif %}
+          </div>
+        </div>
+      </div>
 {% endblock %}
 
 {% block content %}
-    <p><h3>Your comment:</h3></p>
-    {% if user.is_authenticated %}
-        <form method="post">
-            {% csrf_token %}
-                {{ form.errors }}
-                {{ form }}
-            <input type="submit">
-        </form>
-    {% endif %}
-
     <script>
         function load_comments() {
             $('#comments').load('{% url "textform:comments:comments_ajax" pk=message.id %}');
@@ -39,5 +39,63 @@
         window.setInterval(load_comments, 1000);
     </script>
 
+    {% if user.is_authenticated %}
+    <form class="form-horizontal" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <div class="col-md-12">
+            {{ form.text|add_class:"form-control" }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-md-12">
+            <input type="submit" class="btn btn-primary" value="Add comment">
+          </div>
+        </div>
+    </form>
+    {% endif %}
+
+    <div id="comments"></div>
 {% endblock %}
 
+{% block sidecont %}
+    <div class="sidebar-module search-panel">
+        <div class="panel panel-warning">
+            <div class="panel-heading">Post info</div>
+            <div class="panel-body">
+                <div class="col-md-12">
+                    <div class="row">
+                            <p><b>Blog:</b> <a href="{% url 'textform:blogs:detail' message.blog.id %}">{{ message.blog.name }}</a> </p>
+                    </div>
+
+                    <div class="row">
+                        <p><b>Comments:</b> {{ message.comment_set.count }}</p>
+                    </div>
+
+                    <div class="row">
+                        {% if not message.published %}
+                            <p><b>State:</b> Not Published</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        <p><b>Published:</b> {{message.pub_date}} </p>
+                        <p><b>Last edit:</b> {{ message.mod_date }} </p>
+                    </div>
+
+                    <div class="row">
+                        {% if  user.is_authenticated %}
+                            {% if user == message.author %}
+                                <p> <a href="{% url 'textform:editmessage' message.id %}" role="button">Edit message</a>
+                                <a href="{% url 'textform:deletemessage' message.id %}" role="button">Delete message</a><p>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -11,7 +11,7 @@ from blogs.models import Blog
 
 @python_2_unicode_compatible
 class Message(models.Model):
-    title = models.TextField(max_length=100, verbose_name=u'Заголовок поста', default='none')
+    title = models.CharField(max_length=100, verbose_name=u'Заголовок поста', default='none')
     text = models.TextField(verbose_name=u'Текст поста')
     author = models.ForeignKey(User, null=True, blank=True, verbose_name=u'Автор поста')
 
@@ -21,7 +21,7 @@ class Message(models.Model):
     pub_date = models.DateTimeField(verbose_name=u'Дата создания поста', auto_now_add=True)
     mod_date = models.DateTimeField(verbose_name=u'Дата последней модификации', auto_now=True)
 
-    blog = models.ForeignKey(Blog, null=True, blank=True, verbose_name=u'Блог')
+    blog = models.ForeignKey(Blog, null=True, blank=True, verbose_name=u'Блог', on_delete=models.CASCADE)
 
     published = models.BooleanField(default=True)
 	

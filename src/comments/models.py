@@ -18,9 +18,12 @@ class Comment(models.Model):
 
     message = models.ForeignKey(Message, null=True, blank=True, on_delete=models.CASCADE)
     text = models.CharField(max_length=500, verbose_name=u'Текст комментария')
-    author = models.ForeignKey(UserProfile, null=True, blank=True, verbose_name=u'Автор комментария')
-    pub_date = models.DateTimeField(verbose_name=u'Дата создания комментария')
+    author = models.ForeignKey(User, null=True, blank=True, verbose_name=u'Автор комментария')
+    pub_date = models.DateTimeField(verbose_name=u'Дата создания комментария', auto_now_add=True)
     is_published = models.CharField(max_length=1, choices=PUBLISH_OPTIONS)
 
     def __str__(self):
         return self.text
+
+    def comment_beginning(self):
+        return self.text[:20]

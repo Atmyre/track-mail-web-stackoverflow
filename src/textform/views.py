@@ -43,6 +43,10 @@ class IndexView(generic.ListView):
             messages = messages.order_by(self.sort_field)
         return messages
 
+    def latest_comments(self):
+        return Comment.objects.order_by('-pub_date')[:7]
+
+
 
 class MessageView(generic.CreateView):
     template_name = 'textform/detail.html'
@@ -60,7 +64,7 @@ class MessageView(generic.CreateView):
         return super(MessageView, self).form_valid(form)
 
     def get_success_url(self):
-        return resolve_url("textform:detail", pk=self.question.id)
+        return resolve_url("textform:detail", pk=self.message.id)
 
     def get_context_data(self, **kwargs):
         context = super(MessageView, self).get_context_data(**kwargs)

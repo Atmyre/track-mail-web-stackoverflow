@@ -7,6 +7,6 @@ class IndexForm(forms.Form):
     search = forms.CharField(required=False)
 
     SORT_CHOICES = (('title', 'post title'), ('author', 'post author'), ('-pub_date', 'publication date'))
-    sort = forms.ChoiceField(choices=SORT_CHOICES, label='sort parameter', initial='author', widget=forms.Select(), required=False)
+    sort = forms.ChoiceField(choices=SORT_CHOICES, label='Sort parameter', initial='author', widget=forms.Select(), required=False)
 
 

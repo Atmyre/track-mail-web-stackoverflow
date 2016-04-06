@@ -16,7 +16,7 @@ class Message(models.Model):
     author = models.ForeignKey(User, null=True, blank=True, verbose_name=u'Автор поста')
 
     answer_count = models.IntegerField(null=True, blank=True, verbose_name=u'Количество комментариев')
-    like_count = models.IntegerField(null=True, blank=True, verbose_name=u'Количество лайков')
+    like_count = models.IntegerField(null=True, blank=True, verbose_name=u'Количество лайков', default=0)
 
     pub_date = models.DateTimeField(verbose_name=u'Дата создания поста', auto_now_add=True)
     mod_date = models.DateTimeField(verbose_name=u'Дата последней модификации', auto_now=True)

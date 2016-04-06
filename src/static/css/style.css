@@ -31,11 +31,9 @@ body {
   width: 100px;
 }
 
-#popular-members {
-}
-
-#popular-members-list {
-  type: none;
+.btn-sm {
+  border-radius: 4px;
+  border: 4px solid #f0f0f0;
 }
 
 /* Custom page CSS
@@ -99,4 +97,10 @@ form-signin {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+
+.chosen-container-single .chosen-single {
+    height: 34px;
+    border-radius: 5px;
+    border: 5px solid #f0f0f0;
 }

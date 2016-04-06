@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^(?P<pk>[0-9]+)$', views.MessageView.as_view(), name='detail'),
     url(r'^comments/', include('comments.urls', namespace="comments")),
     url(r'^blogs/', include('blogs.urls', namespace="blogs")),
+    url(r'^upmessage/$', views.upmessage, name="upmessage"),
 ]

@@ -9,14 +9,20 @@
 {%  block content %}
     <h1>Posts</h1>
 
+    <script type="text/javascript">
+        $(function() {
+            $(".chosen-select").chosen({disable_search_threshold: 10, height: "95%"});
+        });
+        </script>
+
     <div class="row">
         <div class="col-md-2">
             <h4>Sort by: </h4>
         </div>
         <form class="col-md-3 input-group">
-            {{ form.sort|add_class:"form-control" }}
+            {{ form.sort|add_class:"form-control chosen-select" }}
             <span class="input-group-btn">
-                <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-ok"></span></button>
+                <button class="btn btn-sm btn-default" type="submit"><span class="glyphicon glyphicon-ok"></span></button>
             </span>
         </form>
     </div>
@@ -28,12 +34,28 @@
         <div class="panel-heading">
             <a href="{% url 'textform:detail' message.id %}" active><h4>{{ message.title }}</h4></a>
         </div>
+
+         <script type="text/javascript">
+              $(document).on('click', '[data-click-action]', function() {
+                      console.log(this);
+                      var message_id;
+                      message_id = $(this).attr("data-message-id");
+                      click_url = $(this).attr("data-click-action");
+                      $.get(click_url, {message_id: message_id}, function (data) {
+                          $('#like_count').html(data);
+                          return false;
+                      });
+                      return false;
+                  });
+          </script>
+
         <div class="panel-body">
           <div class="col-md-1">
-            <h1>10</h1>
+            <h1 id="like_count">{{ message.like_count }}</h1>
           </div>
           <div class="col-md-1">
-            <button type="button" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-plus"></span></button>
+
+            <button type="button" data-click-action="/upmessage" data-message-id="{{ message.id }}" class="btn btn-default btn-lg likes-button"><span class="glyphicon glyphicon-plus"></span></button>
             <button type="button" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-minus"></span></button>
           </div>
           <div class="col-md-2">
@@ -113,7 +135,7 @@
                                 <p>No comments yet =(</p>
                             </div>
                         {% endif %}
-                        {% for comment in view.latest_comments %}
+                        {% for comment in latest_comments %}
                             <div class="list-group-item">
                                 <li>
                                     <div>

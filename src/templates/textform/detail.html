@@ -35,6 +35,7 @@
     <script>
         function load_comments() {
             $('#comments').load('{% url "textform:comments:comments_ajax" pk=message.id %}');
+            return false;
         };
         window.setInterval(load_comments, 1000);
     </script>

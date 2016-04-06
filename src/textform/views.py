@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, resolve_url
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
+from django.template import RequestContext
 from django.db.models import Q
 from django.views import generic
 from .models import Message
@@ -27,10 +28,11 @@ class IndexView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
         context['form'] = self.form
+        context['latest_comments'] = Comment.objects.order_by('-pub_date')[:7]
         return context
 
     def get_queryset(self):
-        messages = super(IndexView, self).get_queryset()
+        #messages = super(IndexView, self).get_queryset()
         if self.request.user.is_authenticated():
             messages = Message.objects.filter(Q(published=True) | Q(author=self.request.user)) \
                 .order_by('-pub_date').order_by('published')
@@ -70,6 +72,19 @@ class MessageView(generic.CreateView):
         context = super(MessageView, self).get_context_data(**kwargs)
         context['message'] = self.message
         return context
+
+def upmessage(request):
+    message_id = None
+    if request.method == 'GET':
+        message_id = request.GET['message_id']
+
+    if message_id:
+        message = Message.objects.get(id=int(message_id))
+        if message:
+            message.like_count += 1
+            message.save()
+            return HttpResponse(message.like_count)
+    return HttpResponse(0)
 
 
 class NewMessageView(generic.CreateView):

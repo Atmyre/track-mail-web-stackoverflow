@@ -36,13 +36,18 @@
         </div>
 
          <script type="text/javascript">
-              $(document).on('click', '[data-click-action]', function() {
+              $(document).on('click', '[data-click-action]', function(source) {
                       console.log(this);
                       var message_id;
                       message_id = $(this).attr("data-message-id");
                       click_url = $(this).attr("data-click-action");
-                      $.get(click_url, {message_id: message_id}, function (data) {
-                          $('#like_count').html(data);
+                      $.getJSON(click_url, {message_id: message_id}, function (data) {
+                          console.log(data);
+                          if(data.success) {
+                              $('#like_count').html(data.likes);
+                          } else {
+
+                          }
                           return false;
                       });
                       return false;
@@ -95,6 +100,16 @@
             </div>
 
           </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1 col-md-offset-1">
+                <span><b>Tags: </b></span>
+            </div>
+            <div class="col-md-10">
+                {% for tag in message.tag_set  %}
+                     <a href="#" class="panel panel-success">{{ tag }}</a>
+                {% endfor %}
+            </div>
         </div>
       </div>
     {% endfor %}

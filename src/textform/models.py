@@ -10,6 +10,18 @@ from login.models import UserProfile
 from blogs.models import Blog
 
 @python_2_unicode_compatible
+class Tag(models.Model):
+    name = models.CharField(max_length=10)
+
+    class Meta:
+        verbose_name = u'Тэг'
+        verbose_name_plural = u'Тэги'
+        ordering = ('name',)
+
+    def __str__(self):
+        return self.name
+
+@python_2_unicode_compatible
 class Message(models.Model):
     title = models.CharField(max_length=100, verbose_name=u'Заголовок поста', default='none')
     text = models.TextField(verbose_name=u'Текст поста')
@@ -17,6 +29,7 @@ class Message(models.Model):
 
     answer_count = models.IntegerField(null=True, blank=True, verbose_name=u'Количество комментариев')
     like_count = models.IntegerField(null=True, blank=True, verbose_name=u'Количество лайков', default=0)
+    rating = models.IntegerField(default=0)
 
     pub_date = models.DateTimeField(verbose_name=u'Дата создания поста', auto_now_add=True)
     mod_date = models.DateTimeField(verbose_name=u'Дата последней модификации', auto_now=True)
@@ -24,6 +37,8 @@ class Message(models.Model):
     blog = models.ForeignKey(Blog, null=True, blank=True, verbose_name=u'Блог', on_delete=models.CASCADE)
 
     published = models.BooleanField(default=True)
+
+    tags = models.ManyToManyField(Tag, related_name='messages')
 	
     def __str__(self):
         return self.text

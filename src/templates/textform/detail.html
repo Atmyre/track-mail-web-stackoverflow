@@ -94,6 +94,12 @@
                         {% endif %}
                     </div>
 
+                    <div class="row">
+                        <span><b>Tags: </b></span>
+                        {% for tag in message.tags.all  %}
+                             <a href="#" class="panel panel-success">{{ tag }}</a>
+                        {% endfor %}
+                   </div>
                 </div>
             </div>
         </div>

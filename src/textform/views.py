@@ -1,18 +1,20 @@
 from django.shortcuts import get_object_or_404, resolve_url
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.template import RequestContext
 from django.db.models import Q
 from django.views import generic
 from .models import Message
-from .forms import IndexForm
+from .forms import IndexForm, MessageForm
 from comments.models import Comment
+from django.db.models import Count
 from urllib2 import HTTPError
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ValidationError
 
 class IndexView(generic.ListView):
     template_name = 'textform/index.html'
     context_object_name = 'latest_message_list'
-    fields = ('author', 'title', 'text', 'blog',)
+    fields = ('author', 'title', 'text', 'blog', 'tags')
     model = Message
 
     def dispatch(self, request, *args, **kwargs):
@@ -32,7 +34,6 @@ class IndexView(generic.ListView):
         return context
 
     def get_queryset(self):
-        #messages = super(IndexView, self).get_queryset()
         if self.request.user.is_authenticated():
             messages = Message.objects.filter(Q(published=True) | Q(author=self.request.user)) \
                 .order_by('-pub_date').order_by('published')
@@ -41,12 +42,11 @@ class IndexView(generic.ListView):
 
         if self.search_field:
             messages = messages.filter(Q(title__icontains=self.search_field) | Q(text__icontains=self.search_field))
+
+        messages = messages.annotate(comments_count=Count('comment__id'))
         if self.sort_field:
             messages = messages.order_by(self.sort_field)
         return messages
-
-    def latest_comments(self):
-        return Comment.objects.order_by('-pub_date')[:7]
 
 
 
@@ -78,37 +78,43 @@ def upmessage(request):
     if request.method == 'GET':
         message_id = request.GET['message_id']
 
+    data = {"success": True, "likes": 0}
     if message_id:
         message = Message.objects.get(id=int(message_id))
         if message:
             message.like_count += 1
             message.save()
-            return HttpResponse(message.like_count)
-    return HttpResponse(0)
+            data["likes"] = message.like_count
+        else:
+            data["success"] = False
+    else:
+        data["success"] = False
+    return JsonResponse(data)
 
 
 class NewMessageView(generic.CreateView):
-        template_name = 'textform/printMessage.html'
-        model = Message
-        fields = ('title', 'text', 'blog',)
+    template_name = 'textform/printMessage.html'
+    model = Message
+    form_class = MessageForm
 
-        def get_success_url(self):
-            return resolve_url('textform:detail', self.object.pk)
+    def get_success_url(self):
+        return resolve_url('textform:detail', self.object.pk)
 
-        def form_valid(self, form):
-            form.instance.author = self.request.user
-            return super(NewMessageView, self).form_valid(form)
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super(NewMessageView, self).form_valid(form)
 
-        def get_initial(self):
-            if self.request.method == 'GET':
-                if not self.request.user.is_authenticated():
-                    raise HTTPError
+    def get_initial(self):
+        if self.request.method == 'GET':
+            if not self.request.user.is_authenticated():
+                raise HTTPError
 
 
 class EditMessageView(generic.UpdateView):
     template_name = 'textform/editMessage.html'
     model = Message
-    fields = ('title', 'text', 'blog',)
+    max_tag_number = 3
+    fields = ('title', 'text', 'blog', 'tags')
 
     def get_queryset(self):
         return Message.objects.filter(author=self.request.user)
@@ -118,6 +124,7 @@ class EditMessageView(generic.UpdateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+
         return super(EditMessageView, self).form_valid(form)
 
 def deletemessage(request, pk):

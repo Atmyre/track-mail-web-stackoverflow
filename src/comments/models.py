@@ -8,6 +8,8 @@ from django.utils.encoding import python_2_unicode_compatible
 from textform.models import Message
 from django.contrib.auth.models import User
 from login.models import UserProfile
+from django.dispatch import receiver
+from .tasks import send_email_notification
 
 @python_2_unicode_compatible
 class Comment(models.Model):
@@ -27,3 +29,14 @@ class Comment(models.Model):
 
     def comment_beginning(self):
         return self.text[:20]
+
+
+@receiver(models.signals.post_save, sender=Comment)
+def on_comment_creation(sender, instance, *args, **kwargs):
+    if kwargs.get('created'):
+        comment = instance
+        send_email_notification.delay(
+            'gaintseva@phystech.edu',
+            'New comment on question "{}"'.format(comment.message.title),
+            'You got comment with the text: "{}"'.format(comment.text)
+        )

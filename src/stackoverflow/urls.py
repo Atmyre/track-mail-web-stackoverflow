@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^polls/', include('polls.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^', include('textform.urls')),
+    url(r'^search/', include('haystack.urls', app_name='search', namespace='search')),
 ]

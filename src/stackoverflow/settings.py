@@ -30,6 +30,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+BROKER_URL = 'redis://localhost:6379/0'
+
 
 # Application definition
 
@@ -41,12 +43,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'adjacent',
     'polls',
     'comments',
     'login',
     'blogs',
     'widget_tweaks',
+    'djcelery',
+    'haystack',
+    'search',
 ]
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
+    },
+}
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -140,3 +153,13 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = '/home/tatiana/technotrack/stackoverflow/collected_static/'
 STATICFILES_DIRS = ('/home/tatiana/technotrack/stackoverflow/src/static/', )
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'atmyre@yandex.ru'
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+
+CENTRIFUGE_ADDRESS = 'http://centrifuge.example.com'
+CENTRIFUGE_SECRET = 'your secret key from Centrifugo'
+CENTRIFUGE_TIMEOUT = 10

@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from login.models import UserProfile
 from blogs.models import Blog
 
+
 @python_2_unicode_compatible
 class Tag(models.Model):
     name = models.CharField(max_length=10)
